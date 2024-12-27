@@ -45,6 +45,11 @@ class SpaceShooter:
 
         self.sound = sound
 
+        self.stars = self.generate_stars(100)
+
+        self.camera_x = 0
+        self.camera_y = 0
+
         if self.sound:
             pygame.mixer.pre_init(44100, -16, 2, 64)
             pygame.mixer.init()
@@ -113,10 +118,6 @@ class SpaceShooter:
             sys.exit()
 
 
-
-        
-
-
     def game_over(self):
         # Render the "You Died" message
         game_over_surface = self.announcement_font.render('You Died', True, (255, 0, 0))  # Red text
@@ -136,8 +137,22 @@ class SpaceShooter:
         pygame.quit()
         sys.exit()
 
+
+    def generate_stars(self, count):
+        """Generate a list of random star positions and sizes."""
+        stars = []
+        for _ in range(count):
+            x = random.randint(0, self.world_width)  # Random x position
+            y = random.randint(0, self.world_height)  # Random y position
+            size = random.randint(1, 3)  # Random star size (1 to 3 pixels)
+            stars.append((x, y, size))
+        return stars
+
     def fill_background(self):
         self.screen.fill(self.background_color)  # Fill the screen with white (background)
+
+        for x, y, size in self.stars:
+            pygame.draw.circle(self.screen, (200, 200, 200), (x - self.camera_x, y - self.camera_y), size)  # Gray stars
 
         score_surface = self.font.render(f'Score: {self.player.score}', True, (0, 0, 0))  # Render the score with black color
         self.screen.blit(score_surface, (10, 10))  # Draw the score at the top-left corner (10, 10)
@@ -168,51 +183,35 @@ class SpaceShooter:
                         # bullet = Bullet(player_x + player_size // 2, player_y + player_size // 2, player.direction)
                         self.fire_bullet()
 
-            if len(self.zombies) < self.max_zombie_count and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
-                self.zombies.append(Zombie(world_height=self.world_height, world_width=self.world_width, size=80, speed=random.randint(1,self.zombie_top_speed)))  # Instantiate a new zombie
+            # if len(self.zombies) < self.max_zombie_count and random.randint(1, 100) < 3:  # 3% chance of spawning a zombie per frame
+                # self.zombies.append(Zombie(world_height=self.world_height, world_width=self.world_width, size=80, speed=random.randint(1,self.zombie_top_speed)))  # Instantiate a new zombie
 
             # Get key presses
             keys = pygame.key.get_pressed()
 
-            player_x_direction = None
-            player_y_direction = None 
-
             new_player_x = self.player.x
             if keys[pygame.K_a]:  # Left
-                new_player_x -= self.player.speed
-                player_x_direction = "right"
+                self.player.update_direction(1)
             if keys[pygame.K_d]:  # Right
-                new_player_x += self.player.speed
-                player_x_direction = "left"
-
-            self.player.x = new_player_x
-
-            new_player_y = self.player.y
+                self.player.update_direction(-1)
             if keys[pygame.K_w]:  # Up
-                new_player_y -= self.player.speed
-                player_y_direction = "up" 
+                self.player.throttle(1)
             if keys[pygame.K_s]:  # Down
-                new_player_y += self.player.speed
-                player_y_direction = "down" 
+                self.player.throttle(-1)
 
-            if player_x_direction is not None and player_y_direction is not None:
-                if player_x_direction 
+            # print(self.player.direction)
             
-            print(self.player.direction)
-            
-            self.player.y = new_player_y
-                
             self.player.rect = pygame.Rect(self.player.x, self.player.y, self.player.size, self.player.size)
             # Check for collision with walls
             collision = False
             
             # Update camera position (centered on player)
-            camera_x = self.player.x - self.window_width // 2
-            camera_y = self.player.y - self.window_height // 2
+            self.camera_x = self.player.x - self.window_width // 2
+            self.camera_y = self.player.y - self.window_height // 2
 
             # Keep camera within world bounds
-            camera_x = max(0, min(camera_x, self.world_width - self.window_width))
-            camera_y = max(0, min(camera_y, self.world_height - self.window_height))
+            self.camera_x = max(0, min(self.camera_x, self.world_width - self.window_width))
+            self.camera_y = max(0, min(self.camera_y, self.world_height - self.window_height))
 
 
             # Move self.zombies toward player and check for collisions with self.bullets
@@ -247,7 +246,7 @@ class SpaceShooter:
             # Move and draw self.bullets
             for bullet in self.bullets:
                 bullet.move()
-                bullet.draw(self.screen, camera_x, camera_y)
+                bullet.draw(self.screen, self.camera_x, self.camera_y)
                 
                 # if check_collision(bullet.rect, self.walls):
                     # self.bullets.remove(bullet)
@@ -257,13 +256,13 @@ class SpaceShooter:
             #     zombie.draw(screen, camera_x, camera_y)
 
             # Draw the player (adjusted for the camera position)
-            self.player.draw(self.screen, camera_x, camera_y)
+            self.player.draw(self.screen, self.camera_x, self.camera_y)
 
             for zombie in self.zombies:
-                zombie.draw(self.screen, camera_x, camera_y)
+                zombie.draw(self.screen, self.camera_x, self.camera_y)
             
             # Draw the world boundaries for testing
-            pygame.draw.rect(self.screen, self.border_color, (0 - camera_x, 0 - camera_y, self.world_width, self.world_height), 5)
+            pygame.draw.rect(self.screen, self.border_color, (0 - self.camera_x, 0 - self.camera_y, self.world_width, self.world_height), 5)
 
             # for wall in self.walls:
             #     pygame.draw.rect(self.screen, self.wall_color, (wall.x - camera_x, wall.y - camera_y, wall.width, wall.height))

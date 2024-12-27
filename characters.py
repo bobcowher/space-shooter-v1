@@ -32,6 +32,33 @@ class Player:
             self.images.append(pygame.transform.rotate(image_scaled, i))
 
         self.direction = 0
+        self.direction_input = 0 # This is the raw input returned from the keyboard. 
+        self.velocity = 0
+
+    def update_direction(self, angle_delta):
+        self.direction_input += angle_delta
+        self.direction = self.direction_input % 360
+
+    def throttle(self, throttle):
+
+        throttle = throttle * -1
+ 
+        direction_radians = math.radians(self.direction)
+
+        # if 0 < throttle < 3:
+        #     self.velocity += throttle
+
+        # if self.velocity > 0 and throttle < 0:
+        #     self.velocity += throttle
+
+        y = throttle * math.cos(direction_radians)
+        x = throttle * math.sin(direction_radians)
+
+        print("X: ", x)
+        print("Y: ", y)
+
+        self.x += x
+        self.y += y         
 
     def draw(self, screen, camera_x, camera_y):
         # player_image = self.player.images[self.player.direction]
