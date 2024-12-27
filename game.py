@@ -173,33 +173,33 @@ class SpaceShooter:
 
             # Get key presses
             keys = pygame.key.get_pressed()
-                
+
+            player_x_direction = None
+            player_y_direction = None 
+
             new_player_x = self.player.x
             if keys[pygame.K_a]:  # Left
                 new_player_x -= self.player.speed
-                self.player.direction = 90
+                player_x_direction = "right"
             if keys[pygame.K_d]:  # Right
                 new_player_x += self.player.speed
-                self.player.direction = 270
-
-            new_player_rect = pygame.Rect(new_player_x, self.player.y, self.player.size, self.player.size)
-
-            # # collision = check_collision(new_player_rect, self.walls)
+                player_x_direction = "left"
 
             self.player.x = new_player_x
 
             new_player_y = self.player.y
             if keys[pygame.K_w]:  # Up
                 new_player_y -= self.player.speed
-                self.player.direction = 0 
+                player_y_direction = "up" 
             if keys[pygame.K_s]:  # Down
                 new_player_y += self.player.speed
-                self.player.direction = 180 
+                player_y_direction = "down" 
 
-            new_player_rect = pygame.Rect(self.player.x, new_player_y, self.player.size, self.player.size)
-
-            # collision = check_collision(new_player_rect, self.walls)
-
+            if player_x_direction is not None and player_y_direction is not None:
+                if player_x_direction 
+            
+            print(self.player.direction)
+            
             self.player.y = new_player_y
                 
             self.player.rect = pygame.Rect(self.player.x, self.player.y, self.player.size, self.player.size)

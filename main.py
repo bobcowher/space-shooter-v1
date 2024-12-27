@@ -16,6 +16,6 @@ FPS = 60
 
 game = SpaceShooter(window_width=WINDOW_WIDTH, window_height=WINDOW_HEIGHT, world_height=WORLD_HEIGHT, world_width=WORLD_WIDTH, fps=FPS, sound=False)
 
-# Game loop
+# Game loopaa
 while True:
     game.step()
