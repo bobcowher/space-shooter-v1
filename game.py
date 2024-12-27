@@ -4,7 +4,6 @@ from bullet import Bullet
 from characters import Player, Zombie
 import random
 from util import check_collision, get_collision
-from walls import *
 
 class SpaceShooter:
 
@@ -25,9 +24,7 @@ class SpaceShooter:
         self.clock = pygame.time.Clock() 
         self.fps = fps
 
-        self.walls = walls_1
-
-        self.player = Player(world_height=self.world_height, world_width=self.world_width, walls=self.walls)
+        self.player = Player(world_height=self.world_height, world_width=self.world_width)
 
         self.background_color = (0, 0, 0) # Light brown
         self.wall_color = (1, 50, 32)
@@ -90,12 +87,12 @@ class SpaceShooter:
         self.bullets = []
 
         if self.level == 2:
-            self.vocals_2.play()
-            self.walls = walls_2
+            # self.vocals_2.play()
+            # self.walls = walls_2 
             self.level_goal = 15
         elif self.level == 3:
-            self.vocals_3.play()
-            self.walls = walls_3
+            # self.vocals_3.play()
+            # self.walls = walls_3
             self.level_goal = 30
 
         self.screen.blit(next_level_surface, next_level_rect)
@@ -104,7 +101,7 @@ class SpaceShooter:
         self.max_zombie_count += 2
         # self.player.score = 0
 
-        self.player = Player(world_height=self.world_height, world_width=self.world_width, walls=self.walls)
+        self.player = Player(world_height=self.world_height, world_width=self.world_width)
 
         pygame.display.flip()
 
@@ -187,12 +184,9 @@ class SpaceShooter:
 
             new_player_rect = pygame.Rect(new_player_x, self.player.y, self.player.size, self.player.size)
 
-            collision = check_collision(new_player_rect, self.walls)
+            # # collision = check_collision(new_player_rect, self.walls)
 
-            if not collision and self.player.x != new_player_x:
-                self.player.x = new_player_x
-                self.play_walking_sound()
-            
+            self.player.x = new_player_x
 
             new_player_y = self.player.y
             if keys[pygame.K_w]:  # Up
@@ -204,11 +198,9 @@ class SpaceShooter:
 
             new_player_rect = pygame.Rect(self.player.x, new_player_y, self.player.size, self.player.size)
 
-            collision = check_collision(new_player_rect, self.walls)
+            # collision = check_collision(new_player_rect, self.walls)
 
-            if not collision and self.player.y != new_player_y:
-                self.player.y = new_player_y
-                self.play_walking_sound()
+            self.player.y = new_player_y
                 
             self.player.rect = pygame.Rect(self.player.x, self.player.y, self.player.size, self.player.size)
             # Check for collision with walls
@@ -246,7 +238,7 @@ class SpaceShooter:
 
 
             for zombie in self.zombies:
-                zombie.move_toward_player(self.player.x, self.player.y, self.walls)
+                zombie.move_toward_player(self.player.x, self.player.y)
 
             # Drawing
             self.fill_background()
@@ -257,8 +249,8 @@ class SpaceShooter:
                 bullet.move()
                 bullet.draw(self.screen, camera_x, camera_y)
                 
-                if check_collision(bullet.rect, self.walls):
-                    self.bullets.remove(bullet)
+                # if check_collision(bullet.rect, self.walls):
+                    # self.bullets.remove(bullet)
 
             # Draw self.zombies
             # for zombie in self.zombies:
@@ -273,8 +265,8 @@ class SpaceShooter:
             # Draw the world boundaries for testing
             pygame.draw.rect(self.screen, self.border_color, (0 - camera_x, 0 - camera_y, self.world_width, self.world_height), 5)
 
-            for wall in self.walls:
-                pygame.draw.rect(self.screen, self.wall_color, (wall.x - camera_x, wall.y - camera_y, wall.width, wall.height))
+            # for wall in self.walls:
+            #     pygame.draw.rect(self.screen, self.wall_color, (wall.x - camera_x, wall.y - camera_y, wall.width, wall.height))
 
             # Update the display
             pygame.display.flip()

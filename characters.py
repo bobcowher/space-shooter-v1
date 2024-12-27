@@ -6,7 +6,7 @@ from util import *
 
 class Player:
 
-    def __init__(self, world_width, world_height, walls) -> None:
+    def __init__(self, world_width, world_height) -> None:
         # Player settings
         self.size = 50
         self.speed = 5
@@ -17,15 +17,8 @@ class Player:
         self.x = world_width // 2
         self.y = world_height // 2
         
-        while True:
-            self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
+        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
             
-            if check_collision(self.rect, walls):
-                self.x += random.randint(-5, 5)
-                self.y += random.randint(-5, 5)
-            else:
-                break
-
         self.score = 0
         self.ammo = 10
         self.health = 5
@@ -79,7 +72,7 @@ class Zombie:
         return random.choice(spawn_positions)
 
 
-    def move_toward_player(self, player_x, player_y, walls):
+    def move_toward_player(self, player_x, player_y):
         """Moves the zombie toward the player's position, with better handling of wall collisions."""
         dx, dy = player_x - self.x, player_y - self.y
         distance = math.hypot(dx, dy)
@@ -88,31 +81,13 @@ class Zombie:
         
         # Try horizontal movement first
         new_x = self.x + dx * self.speed
-        new_rect = pygame.Rect(new_x, self.y, self.size, self.size)
-        can_move_x = not check_collision(new_rect, walls)
 
-        if can_move_x:
-            self.x = new_x
-        else:
-            # Increase speed along y-axis if horizontal movement is blocked
-            new_y = self.y + dy * self.speed * 1.5  # Increase speed in vertical direction
-            new_rect = pygame.Rect(self.x, new_y, self.size, self.size)
-            if not check_collision(new_rect, walls):
-                self.y = new_y
+        self.x = new_x
 
         # Try vertical movement next
         new_y = self.y + dy * self.speed
-        new_rect = pygame.Rect(self.x, new_y, self.size, self.size)
-        can_move_y = not check_collision(new_rect, walls)
 
-        if can_move_y:
-            self.y = new_y
-        else:
-            # Increase speed along x-axis if vertical movement is blocked
-            new_x = self.x + dx * self.speed * 1.5  # Increase speed in horizontal direction
-            new_rect = pygame.Rect(new_x, self.y, self.size, self.size)
-            if not check_collision(new_rect, walls):
-                self.x = new_x
+        self.y = new_y
 
         # Update the zombie's position and direction
         self.rect.topleft = (self.x, self.y)
