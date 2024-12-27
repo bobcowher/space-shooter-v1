@@ -30,13 +30,15 @@ class Player:
         self.ammo = 10
         self.health = 5
 
-        self.images = {}
+        self.images = [] 
 
-        for direction in ('up', 'down', 'left', 'right'):
-            image = pygame.image.load(f'images/player_{direction}.png')
-            self.images[direction] = pygame.transform.scale(image, (self.size, self.size))
+        image = pygame.image.load(f'images/space_ship.png')
+        image_scaled = pygame.transform.scale(image, (self.size, self.size))
 
-        self.direction = "up"
+        for i in range(360):
+            self.images.append(pygame.transform.rotate(image_scaled, i))
+
+        self.direction = 0
 
     def draw(self, screen, camera_x, camera_y):
         # player_image = self.player.images[self.player.direction]

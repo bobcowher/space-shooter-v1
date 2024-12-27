@@ -6,7 +6,7 @@ import random
 from util import check_collision, get_collision
 from walls import *
 
-class ZombieShooter:
+class SpaceShooter:
 
     def __init__(self, window_width, window_height, world_height, world_width, fps, sound=False):
 
@@ -29,7 +29,7 @@ class ZombieShooter:
 
         self.player = Player(world_height=self.world_height, world_width=self.world_width, walls=self.walls)
 
-        self.background_color = (181, 101, 29) # Light brown
+        self.background_color = (0, 0, 0) # Light brown
         self.wall_color = (1, 50, 32)
         self.border_color = (255, 0, 0)
 
@@ -131,8 +131,7 @@ class ZombieShooter:
         # Update the display to show the message
         pygame.display.flip()
 
-        self.zombie_snarl.play()
-
+        # TODO: Add sound
         # Pause for 2 seconds (2000 milliseconds) before quitting
         pygame.time.wait(2000)
 
@@ -153,8 +152,9 @@ class ZombieShooter:
     def fire_bullet(self):
         bullet = Bullet(self.player.x, self.player.y, self.player.direction)
         self.bullets.append(bullet)
-        self.shotgun_blast.play()
 
+        # TODO: Add sound
+        
         print("Space pressed. Bullet fired")
 
     def step(self):
@@ -180,10 +180,10 @@ class ZombieShooter:
             new_player_x = self.player.x
             if keys[pygame.K_a]:  # Left
                 new_player_x -= self.player.speed
-                self.player.direction = "left"
+                self.player.direction = 90
             if keys[pygame.K_d]:  # Right
                 new_player_x += self.player.speed
-                self.player.direction = "right"
+                self.player.direction = 270
 
             new_player_rect = pygame.Rect(new_player_x, self.player.y, self.player.size, self.player.size)
 
@@ -197,10 +197,10 @@ class ZombieShooter:
             new_player_y = self.player.y
             if keys[pygame.K_w]:  # Up
                 new_player_y -= self.player.speed
-                self.player.direction = "up"
+                self.player.direction = 0 
             if keys[pygame.K_s]:  # Down
                 new_player_y += self.player.speed
-                self.player.direction = "down"
+                self.player.direction = 180 
 
             new_player_rect = pygame.Rect(self.player.x, new_player_y, self.player.size, self.player.size)
 
