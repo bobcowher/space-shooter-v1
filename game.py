@@ -17,7 +17,7 @@ class SpaceShooter:
         pygame.init()
         self.screen = pygame.display.set_mode((window_width, window_height))
 
-        pygame.display.set_caption('Zombie Shooter')
+        pygame.display.set_caption('Space Shooter')
 
         self.font = pygame.font.SysFont(None, 36)  # Font size 36
 

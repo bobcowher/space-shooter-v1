@@ -53,7 +53,7 @@ class Zombie:
         self.images = {}
 
         for direction in ('up', 'down', 'left', 'right'):
-            image = pygame.image.load(f'images/zombie_{direction}.png')
+            image = pygame.image.load(f'images/alien_space_ship.png')
             self.images[direction] = pygame.transform.scale(image, (self.size, self.size))
 
         self.direction = "up"
