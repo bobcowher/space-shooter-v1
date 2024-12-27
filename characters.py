@@ -85,11 +85,16 @@ class Player:
         else:
             self.velocity = 0
     
-    
+
     def draw(self, screen, camera_x, camera_y):
-        # player_image = self.player.images[self.player.direction]
-        # self.player.rect = player_image.get_rect(center=(self.player.x, self.player.y))
-        screen.blit(self.images[self.direction], (self.x - camera_x, self.y - camera_y))
+    # Get the rotated image
+        rotated_image = self.images[self.direction]
+
+        # Get the rectangle of the rotated image, centered on the player's current position
+        rotated_rect = rotated_image.get_rect(center=(self.x - camera_x, self.y - camera_y))
+
+        # Blit the rotated image at the updated position
+        screen.blit(rotated_image, rotated_rect.topleft)
 
 
 class Zombie:
