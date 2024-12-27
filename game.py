@@ -195,9 +195,11 @@ class SpaceShooter:
             if keys[pygame.K_d]:  # Right
                 self.player.update_direction(-1)
             if keys[pygame.K_w]:  # Up
-                self.player.throttle(1)
+                self.player.throttle(0.1)
             if keys[pygame.K_s]:  # Down
-                self.player.throttle(-1)
+                self.player.throttle(-0.1)
+            
+            self.player.fly()
 
             # print(self.player.direction)
             

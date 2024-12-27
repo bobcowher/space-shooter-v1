@@ -8,7 +8,7 @@ class Player:
 
     def __init__(self, world_width, world_height) -> None:
         # Player settings
-        self.size = 50
+        self.size = 70
         self.speed = 5
 
         # Player initial position in the world (center of the larger world)
@@ -16,6 +16,9 @@ class Player:
 
         self.x = world_width // 2
         self.y = world_height // 2
+
+        self.world_width = world_width
+        self.world_height = world_height
         
         self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
             
@@ -32,6 +35,7 @@ class Player:
             self.images.append(pygame.transform.rotate(image_scaled, i))
 
         self.direction = 0
+        self.velocity_direction = 0
         self.direction_input = 0 # This is the raw input returned from the keyboard. 
         self.velocity = 0
 
@@ -42,24 +46,46 @@ class Player:
     def throttle(self, throttle):
 
         throttle = throttle * -1
+        print("Throttle: ", throttle)
+
+        direction_difference = ((self.direction - self.velocity_direction + 180) % 360 - 180) / 180
+
+        velocity_reduction = abs(self.velocity * direction_difference) * 2.5
+
+        print("Velocity Reduction: ", velocity_reduction)
+
+        print("Direction Difference: ", direction_difference)
  
-        direction_radians = math.radians(self.direction)
+        if throttle < 0: # Remember. Throttle is reversed. 
+            if -3 <= self.velocity:
+                self.velocity += throttle
+            
+            self.velocity = self.velocity + velocity_reduction
 
-        # if 0 < throttle < 3:
-        #     self.velocity += throttle
 
+        else:
+            self.velocity = throttle
+
+        self.velocity_direction = self.direction
+        
+        print("Velocity: ", self.velocity)
         # if self.velocity > 0 and throttle < 0:
         #     self.velocity += throttle
 
-        y = throttle * math.cos(direction_radians)
-        x = throttle * math.sin(direction_radians)
+ 
+    def fly(self):
+        direction_radians = math.radians(self.velocity_direction)
 
-        print("X: ", x)
-        print("Y: ", y)
+        y = self.velocity * math.cos(direction_radians)
+        x = self.velocity * math.sin(direction_radians)
 
-        self.x += x
-        self.y += y         
-
+        if(0 < (self.x + x) < (self.world_width - self.size)) and (0 < (self.y + y) < (self.world_height - self.size)):
+            self.x += x
+            self.y += y
+        else:
+            self.velocity = 0
+    
+    
     def draw(self, screen, camera_x, camera_y):
         # player_image = self.player.images[self.player.direction]
         # self.player.rect = player_image.get_rect(center=(self.player.x, self.player.y))
